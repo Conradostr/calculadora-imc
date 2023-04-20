@@ -1,4 +1,6 @@
-import { Modal } from './modal'
+import { Modal } from "./modal.js"
+import { AlertError } from "./alert-error.js"
+import { calculateIMC, notANumber } from "./utils.js"
 
 // variáveis 
 const form = document.querySelector('form')
@@ -11,20 +13,24 @@ form.onsubmit = function(event) {
 
   const weigth = inputWeigth.value
   const heigth = inputHeigth.value
+  const result = calculateIMC(weigth, heigth)
+  const weigthorHeigthIsNotANumber = notANumber(weigth) || notANumber(heigth)
+  
+  if(weigthorHeigthIsNotANumber){
+    AlertError.open()
+    return;
+  }
 
-  const result = IMC(weigth, heigth)
 
+  AlertError.close()
+  displayAlertMessage(result)
+}
+
+function displayAlertMessage(result){
   Modal.message.innerText = `Seu imc é de ${result}`
-
   Modal.open()
-
-  inputWeigth.value = ""
-  inputHeigth.value = ""
-
 }
 
+inputHeigth.oninput = () =>  AlertError.close()
 
-function IMC(weight, height){
-  return (weight / ((height / 100)**2)).toFixed(2)
-}
-
+inputWeigth.oninput = () =>  AlertError.close()
